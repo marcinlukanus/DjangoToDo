@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import (
     ListView,
     CreateView,
@@ -33,5 +33,16 @@ class ToDoCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class ToDosDetailView(DetailView):
+class ToDoDetailView(DetailView):
     model = ToDos
+
+
+class ToDoDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = ToDos
+    success_url = '/'
+
+    def test_func(self):
+        post = self.get_object()
+        if self.request.user == post.author:
+            return True
+        return False

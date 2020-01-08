@@ -16,13 +16,19 @@
     {% else %}
     <!-- TODO to do list stuff here -->
     <div class="border-top pt-3">
-        <h2>To Do</h2>
-        <a href="{% url 'todo-create' %}">Add</a>
+        <div class="mb-3">
+            <h2>To Do</h2>
+            <p>Signed in as: {{ user.username }}</p>
+            <a href="{% url 'todo-create' %}">Add New Task</a>
+        </div>
+
         {% for todo in todos %}
-            <div class="border-top pt-3">
-                <h4>{{ todo.todo }}</h4>
-                <p>To be completed on: {{ todo.date_to_finish|date:"F d, Y" }}</p>
-            </div>
+            {% if todo.author == user %}
+                <div class="border-top pt-2">
+                    <h4>{{ todo.todo }}</h4>
+                    <p>To be completed on: {{ todo.date_to_finish|date:"F d, Y" }}</p>
+                </div>
+            {% endif %}
         {% endfor %}
     </div>
 

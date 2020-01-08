@@ -3,9 +3,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import (
     ListView,
     CreateView,
-    DeleteView
+    DeleteView,
+    DetailView
 )
 from .models import ToDos
+
 
 def home(request):
     return render(request, 'website/home.html')
@@ -22,7 +24,7 @@ class ToDoListView(ListView):
     ordering = ['date_to_finish']
 
 
-class ToDoCreateView(CreateView):
+class ToDoCreateView(LoginRequiredMixin, CreateView):
     model = ToDos
     fields = ['todo', 'date_to_finish']
 
@@ -30,3 +32,6 @@ class ToDoCreateView(CreateView):
         form.instance.author = self.request.user
         return super().form_valid(form)
 
+
+class ToDosDetailView(DetailView):
+    model = ToDos

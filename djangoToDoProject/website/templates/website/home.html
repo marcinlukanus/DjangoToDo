@@ -1,36 +1,49 @@
 {% extends "website/base.html" %}
+{% include "website/confirm_delete_modal.html" %}
 {% block content %}
-    <h1>Keep Track of Your Life</h1>
-    {% if not user.is_authenticated %}
-        <p>Unorganized? Procrastinating? Help yourself out by making a to do list!
-            It's the best way to help yourself focus on what needs to get done, and it's
-            incredibly easy to get started! Simply sign up and you'll be ready to create
-            and manage your to do list instantly!</p>
+<h1>Keep Track of Your Life</h1>
+{% if not user.is_authenticated %}
+<p>Unorganized? Procrastinating? Help yourself out by making a to do list!
+    It's the best way to help yourself focus on what needs to get done, and it's
+    incredibly easy to get started! Simply sign up and you'll be ready to create
+    and manage your to do list instantly!</p>
 
-        <div class="border-top pt-3">
-            <small class="text-muted">
-                <a class="mr-1" href="{% url 'register' %}">Create an account</a> or
-                <a class="ml-1" href="{% url 'login' %}">Login</a>
-            </small>
-        </div>
-    {% else %}
-    <!-- TODO to do list stuff here -->
-    <div class="border-top pt-3">
-        <div class="mb-3">
-            <h2>To Do</h2>
-            <p>Signed in as: {{ user.username }}</p>
-            <a href="{% url 'todo-create' %}">Add New Task</a>
-        </div>
-
-        {% for todo in todos %}
-            {% if todo.author == user %}
-                <div class="border-top pt-2">
-                    <h4>{{ todo.todo }}</h4>
-                    <p>To be completed on: {{ todo.date_to_finish|date:"F d, Y" }}</p>
-                </div>
-            {% endif %}
-        {% endfor %}
+<div class="border-top pt-3">
+    <small class="text-muted">
+        <a class="mr-1" href="{% url 'register' %}">Create an account</a> or
+        <a class="ml-1" href="{% url 'login' %}">Login</a>
+    </small>
+</div>
+{% else %}
+<!-- TODO to do list stuff here -->
+<div class="border-top pt-3">
+    <div class="mb-3">
+        <h2>To Do</h2>
+        <p>Signed in as: {{ user.username }}</p>
+        <a href="{% url 'todo-create' %}">Add New Task</a>
     </div>
 
+    {% for todo in todos %}
+    {% if todo.author == user %}
+    <div class="border-top pt-2 pb-2">
+        <h4>{{ todo.todo }}</h4>
+        <p>To be completed on: {{ todo.date_to_finish|date:"F d, Y" }}</p>
+        <a href="{% url 'todo-delete' pk=todo.id %}">
+            Mark as Completed</a>
+    </div>
     {% endif %}
+    {% endfor %}
+</div>
+
+{% endif %}
+<script>
+    $(document).on('click', '.confirm-delete', function () {
+        $("#confirmDeleteModal").attr("caller-id", $(this).attr("id"));
+    });
+
+    $(document).on('click', '#confirmDeleteButtonModal', function () {
+        var caller = $("#confirmDeleteButtonModal").closest(".modal").attr("caller-id");
+        window.location = $("#".concat(caller)).attr("href");
+    });
+</script>
 {% endblock content %}
